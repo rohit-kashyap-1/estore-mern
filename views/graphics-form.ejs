@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/44.1.0/ckeditor5.css">
+  <style>
+    body{
+      font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    }
+    *{
+      box-sizing: border-box;
+    }
+    input,select{
+      display: block;
+      width: 400px;
+      margin-bottom: 10px;
+      height:30px;
+      padding-left: 10px;
+      border: 1px solid #ccc;
+    }
+    .ck-editor__editable_inline {
+      min-height: 200px;
+      margin-bottom: 10px;
+    }
+    .hundred{
+      width: 400px;
+    }
+    textarea{
+      width: 400px;
+      border: 1px solid #ccc;
+      height: 150px;
+      padding: 10px;
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    }
+    label{
+      display: flex;
+      align-items: center;
+      padding: 0;
+    }
+    label input{
+      display: inline-block;
+      width: auto;
+
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Add Graphics Card</h2>
+  <form method="post" action="/create-graphics">
+    <input type="text" name="name" placeholder="Name" />
+    <select name="series">
+      <option value="">Select Series</option>
+      <option value="RTX 5000">RTX 5000</option>
+      <option value="RTX 4000">RTX 4000</option>
+      <option value="RTX 3000">RTX 3000</option>
+      <option value="GTX 2000">GTX 2000</option>
+      <option value="GTX 1000">GTX 1000</option>
+    </select>
+    <div class="hundred">
+      <textarea id="" name="description" placeholder="description"></textarea>
+    </div>
+    <div class="hundred">
+      <textarea id="editor" name="features" name="features" placeholder="features"></textarea>
+    </div>
+    <input type="text" name="price" placeholder="price" />
+    <input type="text" name="discount" placeholder="discount" />
+    <select name="isOverclock">
+      <option value="1" selected>Yes</option>
+      <option value="0">No</option>
+    </select>
+    <select name="available">
+      <option value="1" selected>Yes</option>
+      <option value="0">No</option>
+    </select>
+
+    <button>Save</button>
+    <script src="https://cdn.ckeditor.com/ckeditor5/44.1.0/ckeditor5.umd.js"></script>
+
+    <script>
+      const {
+        ClassicEditor,
+        Essentials,
+        Bold,
+        Italic,
+        Font,
+        Paragraph,
+        List,
+        Heading,
+        Alignment
+      } = CKEDITOR;
+
+      ClassicEditor
+        .create(document.querySelector('#editor'), {
+          licenseKey: 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3Njg0MzUxOTksImp0aSI6IjIxYTZkODRmLWE1YTktNDExMC04YzM0LWM4NmRhMWQzYzI5MSIsImxpY2Vuc2VkSG9zdHMiOlsiMTI3LjAuMC4xIiwibG9jYWxob3N0IiwiMTkyLjE2OC4qLioiLCIxMC4qLiouKiIsIjE3Mi4qLiouKiIsIioudGVzdCIsIioubG9jYWxob3N0IiwiKi5sb2NhbCJdLCJ1c2FnZUVuZHBvaW50IjoiaHR0cHM6Ly9wcm94eS1ldmVudC5ja2VkaXRvci5jb20iLCJkaXN0cmlidXRpb25DaGFubmVsIjpbImNsb3VkIiwiZHJ1cGFsIl0sImxpY2Vuc2VUeXBlIjoiZGV2ZWxvcG1lbnQiLCJmZWF0dXJlcyI6WyJEUlVQIl0sInZjIjoiM2JmYWFhN2YifQ.9L64BQ8PryDuU7uPYmTwkbCYkwS0v4CPe-pr6ZfOSLywWYC7DB1REciVw2aI8JITvFsQpd1H4AYJ1REVIrftuw', // Create a free account on https://portal.ckeditor.com/checkout?plan=free
+          plugins: [
+            Essentials, Bold, Italic, Font, Paragraph,
+            List, Heading, Alignment
+          ],
+          toolbar: [
+            'undo', 'redo', '|', 'heading', '|',
+            'bold', 'italic', '|',
+            'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+            'bulletedList', 'numberedList', '|',
+            'alignment'
+          ]
+        })
+        .then(editor => {
+          window.editor = editor;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+
+    </script>
+
+  </form>
+
+</body>
+
+</html>

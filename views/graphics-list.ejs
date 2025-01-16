@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body{
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    }
+    table,th,td{
+      border: 1px solid black;
+    }
+    table{
+      border-collapse: collapse;
+    }
+    th,td{
+      padding:10px 20px;
+    }
+  </style>
+</head>
+<body>
+<table border="1">
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Series</th>
+    <th>Description</th>
+    <th>Price</th>
+    <th>Discount</th>
+    <th>isOverclock</th>
+    <th>available</th>
+    <th>Actions</th>
+  </tr>
+  <!-- <% %> <%= %> -->
+  <% if(graphics.length>0) { %>
+    <% graphics.forEach((item)=>{ %>
+      <tr>
+        <td><%= item.id %></td>
+        <td><%= item.name %></td>
+        <td><%= item.series %></td>
+        <td><%= item.description %></td>
+        <td><%= item.price %></td>
+        <td><%= item.discount %></td>
+        <td><%= (item.isOverClock==1)?'Yes':'No' %></td>
+        <td><%= (item.available==1)?'Yes':'No' %></td>
+        <td>
+          <a href="/edit-graphics/<%= item._id %>">Edit</a>
+          <a href="/delete-graphics/<%= item._id %>">Delete</a>
+        </td>
+      </tr>
+    <% }) %>
+  <% } else { %>
+  <tr>
+    <td>No Record found</td>
+  </tr>
+  <% } %>
+
+
+</table>
+</body>
+</html>
