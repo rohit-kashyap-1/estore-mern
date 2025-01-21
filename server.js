@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const uuid =  require('uuid')
 const path =  require('path')
 const cors = require('cors');
+const jwt =  require('jsonwebtoken')
 dotenv.config()
 app.set('view engine','ejs')
 app.use(express.json())
@@ -12,6 +13,7 @@ app.use(express.urlencoded({ extended: true }))
 app.set('views', path.join(__dirname, 'views'));
 
 const Graphics =  require('./models/GraphicsCard')
+const Customer = require('./models/Customer')
 
 
 //cors
@@ -99,6 +101,89 @@ app.get('/all-products',async (req,res)=>{
 })
 
 
+//razor pay
+app.post('/create-order',async (req,res)=>{
+  const Razorpay = require('razorpay');
+  var instance = new Razorpay({ key_id: 'rzp_test_Lt396pFHNPwyzS', key_secret: 'MSowQzJ6WHui3VfrluxO3TFt' })
+
+  var options = {
+    amount: req.body.amount,  // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    currency: "INR",
+    receipt: uuid.v4()
+  };
+  instance.orders.create(options, function(err, order) {
+    return res.status(200).json(order)
+  });
+
+})
+
+//register customer
+app.post('/register-customer',async (req,res)=>{
+  const name = req.body.name
+  const email =  req.body.email
+  const password =  req.body.password
+  const cnf_password = req.body.cnf_password
+  if(!name){
+   return res.json({type:false,msg:'Name can not be emptry'})
+  }
+  if(!email){
+    return res.json({type:false,msg:'Email can not be emptry'})
+   }
+   if(!password  || password!=cnf_password){
+    return res.json({type:false,msg:'Invalid Password or Password do no match'})
+   }
+
+   const customer = new Customer();//table connect
+   customer.id = uuid.v4()
+   customer.name =  name
+   customer.email =  email
+   customer.password  =  password
+   customer.save()
+   //customer registerd then generate a token and reeturn
+   const token =  jwt.sign(
+    {id:customer.id,name,email},
+    process.env.TOKEN_SECRET,
+    {expiresIn:process.env.DEFAULT_TOKEN_EXPIRE_TIME}
+   )
+
+   res.json({type:true,token:token})
+
+})
+//login customer
+app.post('/login-customer',async (req,res)=>{
+  const email = req.body.email
+  const password = req.body.password
+  const customer = await Customer.findOne({email:email,password:password})
+  if(customer){
+    //generate token
+    const token =  jwt.sign(
+      {id:customer.id,name:customer.name,email},
+      process.env.TOKEN_SECRET,
+      {expiresIn:process.env.DEFAULT_TOKEN_EXPIRE_TIME}
+     )
+
+     res.json({type:true,token:token})
+  }else{
+    //200
+    return res.json({type:false,msg:'User not found'})
+  }
+
+})
+//verify customer
+app.post('/verify-customer',async (req,res)=>{
+    const token = req.body.token
+    //jwt verify
+    if(token){
+      const verify =  jwt.verify(token,process.env.TOKEN_SECRET)
+      if(verify){
+        return res.json({type:true,msg:'valid'})
+      }else{
+        return res.json({type:false,msg:'Invalid Token'})
+      }
+    }else{
+      return res.json({type:false,msg:'Invalid Token'})
+    }
+})
 app.listen(5000,()=>{
   console.log('serer is working...')
 })
