@@ -14,6 +14,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 const Graphics =  require('./models/GraphicsCard')
 const Customer = require('./models/Customer')
+const Address =  require('./models/Address')
 
 
 //cors
@@ -176,13 +177,50 @@ app.post('/verify-customer',async (req,res)=>{
     if(token){
       const verify =  jwt.verify(token,process.env.TOKEN_SECRET)
       if(verify){
-        return res.json({type:true,msg:'valid'})
+        return res.json({type:true,msg:'valid',userId:verify.id})
       }else{
         return res.json({type:false,msg:'Invalid Token'})
       }
     }else{
       return res.json({type:false,msg:'Invalid Token'})
     }
+})
+
+
+
+//address module
+//register address
+//deleted address
+app.post('/add-address',async (req,res)=>{
+  const name = req.body.name
+  const phone =  req.body.phone
+  const addresss = req.body.address
+  const city = req.body.city
+  const pincode = req.body.pincode
+  const userId = req.body.userId
+
+  //validation
+  if(!name){
+    return res.json({type:false,msg:'Name can not be emptry'})
+  }
+  //rest of the validation diy
+  const address =  new Address()
+  address.id = uuid.v4()
+  address.userId = userId
+  address.name = name
+  address.phone = phone
+  address.address = addresss
+  address.city = city
+  address.pincode = pincode
+  address.save()
+  return res.json({type:true,msg:'address added'})
+
+})
+
+app.post('/all-address',async (req,res)=>{
+  const userId = req.body.userId
+  const addresses = await Address.find({userId:userId})
+  return res.json({type:true,addresses:addresses})
 })
 app.listen(5000,()=>{
   console.log('serer is working...')
