@@ -15,6 +15,7 @@ app.set('views', path.join(__dirname, 'views'));
 const Graphics =  require('./models/GraphicsCard')
 const Customer = require('./models/Customer')
 const Address =  require('./models/Address')
+const Order = require('./models/Order')
 
 
 //cors
@@ -221,6 +222,38 @@ app.post('/all-address',async (req,res)=>{
   const userId = req.body.userId
   const addresses = await Address.find({userId:userId})
   return res.json({type:true,addresses:addresses})
+})
+//
+app.post('/place-order',async (req,res)=>{
+  const customerId = req.body.customerId
+  const addressId = req.body.addressId
+  const paymentId = req.body.paymentId
+  const orderId = req.body.orderId
+  const signature = req.body.signature
+  const amount = req.body.amount
+  const products =  JSON.parse(req.body.products)
+  //fetch userr based on user id
+  //fetch address based on address id
+  const customer = await Customer.findOne({id:customerId}).select('id name email -_id')
+  const address = await Address.findOne({id:addressId}).select('address city pincode name phone -_id')
+  const order  = new Order()
+  order.id = uuid.v4()
+  order.order_id =  orderId
+  order.paymentId =  paymentId
+  order.signature = signature
+  order.customer = customer
+  order.address = address
+  order.amount = amount
+  order.products =  products
+  await order.save()
+  if(order){
+    return res.json({order:order,type:true,msg:'Order Successfully placed..'})
+  }else{
+    return res.json({type:false,msg:'Sorry, the order could not be place, if you have moneny deducted, it will be return back to your account in few days'})
+  }
+
+
+
 })
 app.listen(5000,()=>{
   console.log('serer is working...')
